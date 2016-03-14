@@ -57,3 +57,8 @@ Contributors
 
 * Mark Galloway
 * Abram Hindle
+* Sarah Van Belleghem
+
+Resources
+===========
+https://github.com/abramhindle/WebSocketsExamples 2016/03/14
