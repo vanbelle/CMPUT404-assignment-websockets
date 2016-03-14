@@ -122,9 +122,15 @@ function getPosition(e) {
 }
 
 function addEntity(entity, data) {
-    world[entity] = data;
-    drawNextFrame(); // (but should we?)
     //XXX: Send a XHTML Request that updates the entity you just modified!
+    world[entity] = data;
+    var send = {}
+    send[entity] = data;
+    var msg = JSON.stringify(send);
+    socket.send(msg);
+    drawNextFrame(); // (but should we?)
+    update();
+
 }
 var counter = 0;
 function addEntityWithoutName(data) {
@@ -235,12 +241,12 @@ mouse.mousedowners.push(function(x,y,clicked,e) {
 });
 
 mouse.mouseuppers.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'red'});
+    addEntityWithoutName({'x':x,'y':y,'colour':'blue'});
 });
 
 mouse.mousedraggers.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'green',
-                          'radius':10});
+    addEntityWithoutName({'x':x,'y':y,'colour':'LightBlue',
+                          'radius':2});
 });
 
 
@@ -260,8 +266,12 @@ function wsSetup() {
     };
     socket.onmessage = function(msg) {  
         try {
-            debug("WebSocket Recv:" + msg.data);
-            //XXX: TODO What are you going to do here?            
+            var packet = JSON.parse(msg.data);
+            debug("WebSocket Recv:" + packet + (Math.random()).toString());
+            //XXX: TODO What are you going to do here?  
+            var entity = Object.keys(packet)[0];
+            world[entity] = packet[entity]; 
+            renderFrame(); 
         } catch (e) {
             alert("socket on message: " + e);
         }
